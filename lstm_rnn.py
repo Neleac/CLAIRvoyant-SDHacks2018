@@ -39,7 +39,7 @@ X_train = X_train / float(unique_chars)
 y_train = np_utils.to_categorical(dataY)
 
 #print(X_train.shape)
-# (144225, 100, 1)
+#(144225, 100, 1)
 #print(y_train.shape)
 #(144225, 45)
 
@@ -87,7 +87,7 @@ stroke_read_model.add(BatchNormalization(input_shape = (None,)+train_X.shape[2:]
 stroke_read_model.add(Dense(starting_neurons * 32))
 stroke_read_model.add(Dropout(0.3))
 stroke_read_model.add(BatchNormalization(input_shape = (None,)+train_X.shape[2:]))
-stroke_read_model.add(Dense(y.shape[1]), activation = 'softmax'))
+stroke_read_model.add(Dense(y.shape[1]), activation = 'softmax')
 stroke_read_model.compile(optimizer = 'adam', loss = 'categorical_crossentropy', metrics = ['categorical_accuracy'])
 #stroke_read_model.summary()
 
