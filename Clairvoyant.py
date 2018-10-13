@@ -1,3 +1,5 @@
+#MARY USE THIS
+
 from clarifai.rest import ClarifaiApp
 
 app = ClarifaiApp(api_key = 'e77c49d9b41845bb82caf94ab3f1471f')
