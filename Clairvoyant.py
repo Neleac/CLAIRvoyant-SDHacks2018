@@ -1,14 +1,29 @@
-#MARY WAS HERE
+#!pip install --upgrade pip
+#!pip install clarifai --upgrade
 
+import clarifai
 from clarifai.rest import ClarifaiApp
+from clarifai.rest import Image as ClImage
 
-app = ClarifaiApp(api_key = 'e77c49d9b41845bb82caf94ab3f1471f')
+MY_API_KEY = '9f14ea7b98e0449d8f65509d5b882896'
+app = ClarifaiApp(api_key = MY_API_KEY)
 
-model = app.public_models.general_model
+model = app.models.get('general-v1.3')
+#image = ClImage(file_obj=open('/Users/depressedonion/Downloads/kittenSmol.jpg', 'rb'))
+print("Type location: ")
+imageLocation = input()
+if imageLocation.startswith('https'):
+    image = ClImage(url=imageLocation)
+response = model.predict([image])
 
-response = model.predict_by_filename('images/wallpaper.jpg')
+outputs = response['outputs']
+stuff = outputs[0]
+infoEach = stuff['data']
+concepts = infoEach['concepts']
 
-concepts = response['outputs'][0]['data']['concepts']
-for concept in concepts:
-	print(concept)
-	#print(concept['name'], concept['value'])
+listOfWords = []
+for one in concepts:
+    listOfWords.append(one['name'])
+
+for word in listOfWords:
+    print(word)
