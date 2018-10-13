@@ -7,8 +7,10 @@ model = app.public_models.general_model
 response = model.predict_by_filename('images/wallpaper.jpg')
 
 concepts = response['outputs'][0]['data']['concepts']
-for concept in concepts:
-	print(concept)
+
+print(concepts[0])
+#for concept in concepts:
+	#print(concept)
 	#print(concept['name'], concept['value'])
 
 #BRANCH lstm-rnn
