@@ -6,6 +6,9 @@ Stories are fun, and they usually require an in-depth creative process by an aut
 
 ## The approach (with details)
 Our initial approach consisted of Neural net consisting LSTM with Conv2D layers, and Dropout and BatchNorm layers for regularization.
+
+In this case, we do not generate a validation dataset through validation split, as the network will benefit more from larger training data set, and will not benefit as much from testing loss/metric.
+
 ## Conclusion
 something to wrap up this project and how good it is blah blah
 
