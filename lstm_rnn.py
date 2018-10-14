@@ -9,11 +9,15 @@ def get_available_gpus():
     return [x.name for x in local_device_protos if x.device_type == 'GPU']
 
 #load data
-file_path = 'data\\GoT.txt'
+file_path = 'data\\alice_in_wonderland.txt'
 book = open(file_path, encoding = "utf8").read().lower()
 
 #covert unique chars to int
 chars = sorted(list(set(book)))
+
+char_to_int = dict((c, i) for i, c in enumerate(chars))
+int_to_char = dict((i, c) for i, c in enumerate(chars))
+
 char_int_dict = {}
 for integer, character in enumerate(chars):
 	char_int_dict[character] = integer
@@ -21,20 +25,21 @@ for integer, character in enumerate(chars):
 total_chars = len(book)
 unique_chars = len(chars)
 
-filter_len = 100
+filter_len = 250 #100
 dataX = []
 dataY = []
 for i in range(0, total_chars - filter_len):
-	lineX = book[i: i + filter_len]
-	lineY = book[i + filter_len]
+    lineX = book[i: i + filter_len]
+    lineY = book[i + filter_len]
 
-	char_int_list = []
-	for char in lineX:
-		char_int_list.append(char_int_dict[char])
+	#char_int_list = []
+	#for char in lineX:
+	#	char_int_list.append(char_int_dict[char])
 	
-	dataX.append(char_int_list)
-	dataY.append(char_int_dict[lineY])
-
+	#dataX.append(char_int_list)
+	#dataY.append(char_int_dict[lineY])
+    dataX.append([char_to_int[char] for char in lineX])
+    dataY.append(char_to_int[lineY])
 total_filters = len(dataX)
 
 #prepare training data
@@ -64,36 +69,14 @@ if len(get_available_gpus())>0:
     # https://twitter.com/fchollet/status/918170264608817152?lang=en
     from keras.layers import CuDNNLSTM as LSTM # this one is about 3x faster on GPU instances
 stroke_read_model = Sequential()
-stroke_read_model.add(BatchNormalization(input_shape = (None,)+X_train.shape[2:]))
-# filter count and length are taken from the script https://github.com/tensorflow/models/blob/master/tutorials/rnn/quickdraw/train_model.py
-stroke_read_model.add(Conv1D(starting_neurons * 1, (5,)))
-stroke_read_model.add(Conv1D(starting_neurons * 1, (5,)))
-stroke_read_model.add(Dropout(0.3))
-#stroke_read_model.add(BatchNormalization(input_shape = (None,)+X_train.shape[2:]))
-stroke_read_model.add(Conv1D(starting_neurons * 2, (5,)))
-stroke_read_model.add(Conv1D(starting_neurons * 2, (5,)))
-stroke_read_model.add(Dropout(0.3))
-#stroke_read_model.add(BatchNormalization(input_shape = (None,)+X_train.shape[2:]))
-stroke_read_model.add(Conv1D(starting_neurons * 4, (3,)))
-stroke_read_model.add(Conv1D(starting_neurons * 4, (3,)))
-stroke_read_model.add(Dropout(0.3))
-#stroke_read_model.add(BatchNormalization(input_shape = (None,)+X_train.shape[2:]))
-stroke_read_model.add(Conv1D(starting_neurons * 8, (3,)))
-stroke_read_model.add(Conv1D(starting_neurons * 8, (3,)))
-stroke_read_model.add(Dropout(0.3))
-#stroke_read_model.add(BatchNormalization())
-stroke_read_model.add(LSTM(starting_neurons * 16, return_sequences = True))
-stroke_read_model.add(Dropout(0.3))
-#stroke_read_model.add(BatchNormalization(input_shape = (None,)+X_train.shape[2:]))
+stroke_read_model.add(LSTM(starting_neurons * 16,input_shape=(X_train.shape[1], X_train.shape[2]) ,return_sequences = True))
+stroke_read_model.add(Dropout(0.2))
 stroke_read_model.add(LSTM(starting_neurons * 16, return_sequences = False))
-stroke_read_model.add(Dropout(0.3))
-#stroke_read_model.add(BatchNormalization(input_shape = (None,)+X_train.shape[2:]))
-stroke_read_model.add(Dense(starting_neurons * 32))
-stroke_read_model.add(Dropout(0.3))
-stroke_read_model.add(BatchNormalization(input_shape = (None,)+X_train.shape[2:]))
+stroke_read_model.add(Dropout(0.2))
+#stroke_read_model.add(Dense(starting_neurons * 32))
+stroke_read_model.add(Dropout(0.2))
 stroke_read_model.add(Dense(y_train.shape[1], activation = 'softmax'))
 stroke_read_model.compile(optimizer = 'adam', loss = 'categorical_crossentropy', metrics = ['categorical_accuracy'])
-#stroke_read_model.summary()
 
 #=======================HyperParameters===========
 
@@ -109,8 +92,8 @@ callbacks_list = [checkpoint, reduceLROnPlat] #early,
 from IPython.display import clear_output
 stroke_read_model.fit(X_train, y_train,
                       #validation_split = 0.2, 
-                      batch_size = 2048,#128,
-                      epochs = 8,
+                      batch_size = 512,#128,
+                      epochs = 30,
                       callbacks = callbacks_list,
                       verbose = 1)
 clear_output()

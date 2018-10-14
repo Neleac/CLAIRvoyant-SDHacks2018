@@ -11,7 +11,7 @@ def get_available_gpus():
 
 
 #load data
-file_path = 'data\\GoT.txt'
+file_path = 'data\\alice_in_wonderland.txt'
 book = open(file_path, encoding = "utf8").read().lower()
 
 #covert unique chars to int
@@ -24,7 +24,7 @@ int_to_char = dict((i, c) for i, c in enumerate(chars))
 total_chars = len(book)
 unique_chars = len(chars)
 
-filter_len = 100
+filter_len = 250#100
 dataX = []
 dataY = []
 for i in range(0, total_chars - filter_len):
@@ -55,35 +55,17 @@ starting_neurons =  16 # starting filters
 if len(get_available_gpus())>0:
     # https://twitter.com/fchollet/status/918170264608817152?lang=en
     from keras.layers import CuDNNLSTM as LSTM # this one is about 3x faster on GPU instances
+
 stroke_read_model = Sequential()
-stroke_read_model.add(BatchNormalization(input_shape = (None,)+X_train.shape[2:]))
-# filter count and length are taken from the script https://github.com/tensorflow/models/blob/master/tutorials/rnn/quickdraw/train_model.py
-stroke_read_model.add(Conv1D(starting_neurons * 1, (5,)))
-stroke_read_model.add(Conv1D(starting_neurons * 1, (5,)))
-stroke_read_model.add(Dropout(0.3))
-#stroke_read_model.add(BatchNormalization(input_shape = (None,)+X_train.shape[2:]))
-stroke_read_model.add(Conv1D(starting_neurons * 2, (5,)))
-stroke_read_model.add(Conv1D(starting_neurons * 2, (5,)))
-stroke_read_model.add(Dropout(0.3))
-#stroke_read_model.add(BatchNormalization(input_shape = (None,)+X_train.shape[2:]))
-stroke_read_model.add(Conv1D(starting_neurons * 4, (3,)))
-stroke_read_model.add(Conv1D(starting_neurons * 4, (3,)))
-stroke_read_model.add(Dropout(0.3))
-#stroke_read_model.add(BatchNormalization(input_shape = (None,)+X_train.shape[2:]))
-stroke_read_model.add(Conv1D(starting_neurons * 8, (3,)))
-stroke_read_model.add(Conv1D(starting_neurons * 8, (3,)))
-stroke_read_model.add(Dropout(0.3))
-#stroke_read_model.add(BatchNormalization())
-stroke_read_model.add(LSTM(starting_neurons * 16, return_sequences = True))
-stroke_read_model.add(Dropout(0.3))
-#stroke_read_model.add(BatchNormalization(input_shape = (None,)+X_train.shape[2:]))
+stroke_read_model.add(LSTM(starting_neurons * 16,input_shape=(X_train.shape[1], X_train.shape[2]) ,return_sequences = True))
+stroke_read_model.add(Dropout(0.2))
 stroke_read_model.add(LSTM(starting_neurons * 16, return_sequences = False))
-stroke_read_model.add(Dropout(0.3))
-#stroke_read_model.add(BatchNormalization(input_shape = (None,)+X_train.shape[2:]))
-stroke_read_model.add(Dense(starting_neurons * 32))
-stroke_read_model.add(Dropout(0.3))
-stroke_read_model.add(BatchNormalization(input_shape = (None,)+X_train.shape[2:]))
+stroke_read_model.add(Dropout(0.2))
+#stroke_read_model.add(Dense(starting_neurons * 32))
+stroke_read_model.add(Dropout(0.2))
 stroke_read_model.add(Dense(y_train.shape[1], activation = 'softmax'))
+stroke_read_model.compile(optimizer = 'adam', loss = 'categorical_crossentropy', metrics = ['categorical_accuracy'])
+
 
 
 stroke_read_model.load_weights('weights.best.hdf5')
@@ -93,12 +75,19 @@ stroke_read_model.compile(optimizer = 'adam', loss = 'categorical_crossentropy')
 int_to_char = dict((i, c) for i, c in enumerate(chars))
 
 # pick a random seed
-start = np.random.randint(0, len(dataX)-1)
-pattern = dataX[start]
+#start = np.random.randint(0, len(dataX)-1)
+#pattern = dataX[start]
+#print(pattern)
+
+seed = "there is a little little"
+pattern = []
+pattern.append([char_to_int[char] for char in seed])
+
 print ("Seed:")
 print ("\"", ''.join([int_to_char[value] for value in pattern]), "\"")
+
 # generate characters
-for i in range(500):
+for i in range(0,50):
     x = np.reshape(pattern, (1, len(pattern), 1))
     x = x / float(unique_chars)
     prediction = stroke_read_model.predict(x, verbose=0)
@@ -106,7 +95,7 @@ for i in range(500):
     result = int_to_char[index]
     seq_in = [int_to_char[value] for value in pattern]
     sys.stdout.write(result)
-    #sys.stdout.flush()
+    sys.stdout.flush()
     pattern.append(index)
     pattern = pattern[1:len(pattern)]
 print ("\nDone.")
