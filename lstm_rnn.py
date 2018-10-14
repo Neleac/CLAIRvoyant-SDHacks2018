@@ -43,7 +43,7 @@ X_train = X_train / float(unique_chars)
 y_train = np_utils.to_categorical(dataY)
 
 #print(X_train.shape)
-#(144225, 100, 1)
+# (144225, 100, 1)
 #print(y_train.shape)
 #(144225, 45)
 
@@ -97,7 +97,7 @@ stroke_read_model.compile(optimizer = 'adam', loss = 'categorical_crossentropy',
 
 #=======================HyperParameters===========
 
-weight_path = "weights.best.hdf5"
+weight_path="weights.best.hdf5"
 checkpoint = ModelCheckpoint(weight_path, monitor='loss', verbose=1, 
                              save_best_only=True, mode='min', save_weights_only = True)
 reduceLROnPlat = ReduceLROnPlateau(monitor='loss', factor=0.8, patience=4,
@@ -116,6 +116,7 @@ stroke_read_model.fit(X_train, y_train,
 clear_output()
 
 #========================PREDICTIONS==============
+
 '''
 model.load_weights('weights.best.hdf5')
 stroke_read_model.compile(optimizer = 'adam', loss = 'categorical_crossentropy')
@@ -127,17 +128,19 @@ int_to_char = dict((i, c) for i, c in enumerate(chars))
 start = numpy.random.randint(0, len(dataX)-1)
 pattern = dataX[start]
 print ("Seed:")
-print ("\"", ''.join([int_to_char[value] for value in pattern]), "\"")
+print "\"", ''.join([int_to_char[value] for value in pattern]), "\""
 # generate characters
 for i in range(1000):
 	x = numpy.reshape(pattern, (1, len(pattern), 1))
 	x = x / float(n_vocab)
-	prediction = model.predict(x, verbose = 0)
+	prediction = model.predict(x, verbose=0)
 	index = numpy.argmax(prediction)
 	result = int_to_char[index]
 	seq_in = [int_to_char[value] for value in pattern]
 	sys.stdout.write(result)
 	pattern.append(index)
 	pattern = pattern[1:len(pattern)]
-print("Done.")
+print "Done."
 '''
+
+
