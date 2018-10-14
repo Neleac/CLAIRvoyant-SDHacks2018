@@ -62,32 +62,32 @@ stroke_read_model.add(Dropout(0.2))
 stroke_read_model.add(LSTM(starting_neurons * 16, return_sequences = False))
 stroke_read_model.add(Dropout(0.2))
 #stroke_read_model.add(Dense(starting_neurons * 32))
-stroke_read_model.add(Dropout(0.2))
+#stroke_read_model.add(Dropout(0.2))
 stroke_read_model.add(Dense(y_train.shape[1], activation = 'softmax'))
 stroke_read_model.compile(optimizer = 'adam', loss = 'categorical_crossentropy', metrics = ['categorical_accuracy'])
 
 
 
-stroke_read_model.load_weights('weights.best.hdf5')
+stroke_read_model.load_weights('weights.best1.hdf5')
 stroke_read_model.compile(optimizer = 'adam', loss = 'categorical_crossentropy')
 
 # reverse mapping to convert integers back into characters
 int_to_char = dict((i, c) for i, c in enumerate(chars))
 
 # pick a random seed
-#start = np.random.randint(0, len(dataX)-1)
-#pattern = dataX[start]
+start = np.random.randint(0, len(dataX)-1)
+pattern = dataX[start]
 #print(pattern)
 
-seed = "there is a little little"
-pattern = []
-pattern.append([char_to_int[char] for char in seed])
+#seed = "there is a little little"
+#pattern = [char_to_int[char] for char in seed]
+#pattern.append([char_to_int[char] for char in seed])
 
 print ("Seed:")
 print ("\"", ''.join([int_to_char[value] for value in pattern]), "\"")
-
+#print(seed)
 # generate characters
-for i in range(0,50):
+for i in range(0,500):
     x = np.reshape(pattern, (1, len(pattern), 1))
     x = x / float(unique_chars)
     prediction = stroke_read_model.predict(x, verbose=0)

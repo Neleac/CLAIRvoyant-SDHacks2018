@@ -1,3 +1,10 @@
+version = 1
+'''
+v1: 10:25 PM
+
+'''
+
+
 import numpy as np
 from keras.models import Sequential
 from keras.layers import BatchNormalization, Conv1D, LSTM, Dense, Dropout
@@ -74,13 +81,13 @@ stroke_read_model.add(Dropout(0.2))
 stroke_read_model.add(LSTM(starting_neurons * 16, return_sequences = False))
 stroke_read_model.add(Dropout(0.2))
 #stroke_read_model.add(Dense(starting_neurons * 32))
-stroke_read_model.add(Dropout(0.2))
+#stroke_read_model.add(Dropout(0.2))
 stroke_read_model.add(Dense(y_train.shape[1], activation = 'softmax'))
 stroke_read_model.compile(optimizer = 'adam', loss = 'categorical_crossentropy', metrics = ['categorical_accuracy'])
 
 #=======================HyperParameters===========
 
-weight_path="weights.best.hdf5"
+weight_path="weights.best" + str(version) + ".hdf5"
 checkpoint = ModelCheckpoint(weight_path, monitor='loss', verbose=1, 
                              save_best_only=True, mode='min', save_weights_only = True)
 reduceLROnPlat = ReduceLROnPlateau(monitor='loss', factor=0.8, patience=4,
@@ -93,7 +100,7 @@ from IPython.display import clear_output
 stroke_read_model.fit(X_train, y_train,
                       #validation_split = 0.2, 
                       batch_size = 512,#128,
-                      epochs = 30,
+                      epochs = 250,
                       callbacks = callbacks_list,
                       verbose = 1)
 clear_output()
