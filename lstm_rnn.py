@@ -1,10 +1,3 @@
-version = 1
-'''
-v1: 10:25 PM
-
-'''
-
-
 import numpy as np
 from keras.models import Sequential
 from keras.layers import BatchNormalization, Conv1D, LSTM, Dense, Dropout
@@ -16,7 +9,7 @@ def get_available_gpus():
     return [x.name for x in local_device_protos if x.device_type == 'GPU']
 
 #load data
-file_path = 'data\\alice_in_wonderland.txt'
+file_path = 'data\\GoT.txt'
 book = open(file_path, encoding = "utf8").read().lower()
 
 #covert unique chars to int
@@ -87,7 +80,7 @@ stroke_read_model.compile(optimizer = 'adam', loss = 'categorical_crossentropy',
 
 #=======================HyperParameters===========
 
-weight_path="weights.best" + str(version) + ".hdf5"
+weight_path="weights_got.best.hdf5"
 checkpoint = ModelCheckpoint(weight_path, monitor='loss', verbose=1, 
                              save_best_only=True, mode='min', save_weights_only = True)
 reduceLROnPlat = ReduceLROnPlateau(monitor='loss', factor=0.8, patience=4,
@@ -100,7 +93,7 @@ from IPython.display import clear_output
 stroke_read_model.fit(X_train, y_train,
                       #validation_split = 0.2, 
                       batch_size = 512,#128,
-                      epochs = 250,
+                      epochs = 100,
                       callbacks = callbacks_list,
                       verbose = 1)
 clear_output()

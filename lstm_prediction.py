@@ -68,7 +68,7 @@ stroke_read_model.compile(optimizer = 'adam', loss = 'categorical_crossentropy',
 
 
 
-stroke_read_model.load_weights('weights.best1.hdf5')
+stroke_read_model.load_weights('weights.best.hdf5')
 stroke_read_model.compile(optimizer = 'adam', loss = 'categorical_crossentropy')
 
 # reverse mapping to convert integers back into characters
