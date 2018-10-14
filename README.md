@@ -25,7 +25,7 @@ Please read [CONTRIBUTING.md](https://gist.github.com) for details on our code o
 
 ## Authors
 
-* **Caelen Wang** - [21Wangc](https://github.com/21WANGC)
+* **Caelen Wang** - [21wangc](https://github.com/21WANGC)
 * **Mariam Gadzhimagomedova** - [mgG809](https://github.com/mgG809)
 * **JoonHo (Brian) Lee** - [JHL0513](https://github.com/JHL0513)
 
