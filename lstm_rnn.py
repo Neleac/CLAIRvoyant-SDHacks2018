@@ -9,7 +9,7 @@ def get_available_gpus():
     return [x.name for x in local_device_protos if x.device_type == 'GPU']
 
 #load data
-file_path = 'data\\alice_in_wonderland.txt'
+file_path = 'data\\GoT.txt'
 book = open(file_path, encoding = "utf8").read().lower()
 
 #covert unique chars to int
@@ -109,8 +109,8 @@ callbacks_list = [checkpoint, reduceLROnPlat] #early,
 from IPython.display import clear_output
 stroke_read_model.fit(X_train, y_train,
                       #validation_split = 0.2, 
-                      batch_size = 1024,#2048,#128,
-                      epochs = 80,
+                      batch_size = 2048,#128,
+                      epochs = 8,
                       callbacks = callbacks_list,
                       verbose = 1)
 clear_output()
